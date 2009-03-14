@@ -8,6 +8,9 @@ class VendingMachineTests extends GroovyTestCase {
     void setUp() {
         vendor = new VendingMachine()
         def inventory = [
+                A:[item:[name:'item a'], price: 0.65, quantity: 1000],
+                B:[item:[name:'item b'], price: 1, quantity: 1000],
+                C:[item:[name:'item c'], price: 1.5, quantity: 1000],
                 D8: [item:[name:'Baby Ruth'], price: 1.0, quantity: 1000],
                 D9: [item:[name:'Mr. Goodbar'], price: 1.0, quantity: 1000]
         ]
@@ -76,6 +79,14 @@ class VendingMachineTests extends GroovyTestCase {
         def result = t.doTransaction(vendor)
         assertEquals 'Mr. Goodbar', result[0].name
         assertEquals 0.5, result[1]
+    }
+
+    void testBuyWithQuarters() {
+        vendor.quarter()
+        vendor.quarter()
+        vendor.quarter()
+        vendor.quarter()
+        assertEquals 'item a', vendor.getA().name
     }
 
 }

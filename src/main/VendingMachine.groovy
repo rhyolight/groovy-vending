@@ -3,6 +3,13 @@
  */
 class VendingMachine {
 
+    static final COINS = [
+            'dollar': 1,
+            'quarter': 0.25,
+            'dime': 0.1,
+            'nickel': 0.05
+    ]
+
     def inventory
     def deposit = 0
     
@@ -26,5 +33,18 @@ class VendingMachine {
         def change = deposit
         deposit = 0
         change
+    }
+
+    def methodMissing(String name, args) {
+        println "methodMissing: $name"
+        if (name.startsWith('get')) {
+            this.vend(name - 'get')
+        } else {
+            VendingMachine.metaClass."$name" = { ->
+                println "in $name"
+                delegate.pay(COINS[name])
+            }
+            return this.pay(COINS[name])
+        }
     }
 }
