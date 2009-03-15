@@ -61,7 +61,7 @@ class VendingMachine {
     }
 
     def methodMissing(String name, args) {
-        if (name in Coin.values().collect {it.name()}) {
+        if (name in Coin.values()*.name()) {
             def newMethod = { ->
                 delegate.bank[Coin."$name"]++
                 delegate.pay(Coin."$name".value())
