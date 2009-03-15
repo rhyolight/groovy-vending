@@ -228,7 +228,7 @@ class VendingMachineTests extends GroovyTestCase {
         if (amount == 0) {
             assertEquals 0, change.size()
         } else {
-            assertEquals amount, change.collect { it.value() }.sum()
+            assertEquals amount, change*.value().sum()
         }
     }
 
