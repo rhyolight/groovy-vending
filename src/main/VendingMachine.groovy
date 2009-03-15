@@ -8,19 +8,13 @@ class VendingMachine {
     def deposit = 0
     def serviceMode = false
 
-    void setInventory(inventory) {
-        if (!serviceMode) {
-            throw new VendingException('Cannot execute command unless in service mode')
-        }
-        this.@inventory = inventory
+    void setProperty(String propertyName, value) {
+		if(propertyName in ['bank', 'inventory'] && !serviceMode) {
+			throw new VendingException('Cannot execute command unless in service mode')
+		}
+		metaClass.setProperty(this, propertyName, value)
     }
 
-    void setBank(bank) {
-        if (!serviceMode)
-            throw new VendingException('Cannot execute command unless in service mode')
-        this.@bank = bank
-    }
-    
     def pay(amount) {
         deposit += amount
         deposit
