@@ -43,7 +43,7 @@ class VendingMachine {
         toCoin(change)
     }
 
-    private def toCoin(change) {
+    private toCoin(change) {
         def coins = []
         Coin.values().each { coin ->
             // while change to give is greater than coin value, and there are more coins in the bank to give
