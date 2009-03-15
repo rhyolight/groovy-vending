@@ -19,7 +19,7 @@ B4,Honey Bun,1.50,7
         loader.load(inventory)
         assertNotNull vendor.inventory
         assertEquals 1, vendor.inventory.A1.price
-        assertEquals 'Zagnut', vendor.inventory.A2.item.name
+        assertEquals 'Zagnut', vendor.inventory.A2.name
         assertEquals 120, vendor.inventory.A3.quantity
     }
 

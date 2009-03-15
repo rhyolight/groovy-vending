@@ -8,11 +8,11 @@ class VendingMachineTests extends GroovyTestCase {
     void setUp() {
         vendor = new VendingMachine()
         def inventory = [
-                A:[item:[name:'item a'], price: 0.65, quantity: 1000],
-                B:[item:[name:'item b'], price: 1, quantity: 1000],
-                C:[item:[name:'item c'], price: 1.5, quantity: 1000],
-                D8: [item:[name:'Baby Ruth'], price: 1.0, quantity: 1000],
-                D9: [item:[name:'Mr. Goodbar'], price: 1.0, quantity: 1000]
+                A :[name:'item a', price: 0.65, quantity: 1000],
+                B :[name:'item b', price: 1, quantity: 1000],
+                C :[name:'item c', price: 1.5, quantity: 1000],
+                D8:[name:'Baby Ruth', price: 1.0, quantity: 1000],
+                D9:[name:'Mr. Goodbar', price: 1.0, quantity: 1000]
         ]
         vendor.inventory = inventory
         vendor.bank = [
@@ -78,7 +78,7 @@ class VendingMachineTests extends GroovyTestCase {
     }
 
     void testVendingWhenNoInventoryReturnsErrorMessage() {
-        vendor.inventory.A1 = [item:[name:'Zagnut'], price:1, quantity:0]
+        vendor.inventory.A1 = [name:'Zagnut', price:1, quantity:0]
         vendor.dollar()
         assertEquals 'Sorry, no more Zagnut, please choose again.', vendor.vend('A1')
         assertEquals 1, vendor.deposit
