@@ -4,7 +4,7 @@ enum Coin {
 
     Coin(value) { this.value = value }
 
-    private final def value
+    private final value
 
     def value() { return value }
 }
