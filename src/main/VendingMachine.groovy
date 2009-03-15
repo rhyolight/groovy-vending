@@ -12,8 +12,11 @@ class VendingMachine {
         deposit
     }
 
-    def vend(code) {
+    def vend = { code ->
+        println "vend($code)"
+        println "deposit on ${this}: $deposit"
         def item = inventory[code]
+        println item
         if (!item) return "Sorry, no code of '${code}' exists."
         if (item.quantity <= 0) return "Sorry, no more ${item.item.name}, please choose again."
         if (item.price <= deposit) {
@@ -47,12 +50,12 @@ class VendingMachine {
         if (name.startsWith('get')) {
             this.vend(name - 'get')
         } else {
-            VendingMachine.metaClass."$name" = { ->
-                println "in $name"
+            def newMethod = { ->
+                delegate.bank[Coin."$name"]++
                 delegate.pay(Coin."$name".value())
             }
-            println Coin.quarter
-            return this.pay(Coin."$name".value())
+            VendingMachine.metaClass."$name" = newMethod
+            newMethod.call(args)
         }
     }
 }

@@ -24,37 +24,58 @@ class VendingMachineTests extends GroovyTestCase {
     }
 
     void testVend() {
-        assertEquals 1, vendor.pay(1)
+        assertEquals 1, vendor.dollar()
         assertEquals 'Mr. Goodbar', vendor.vend('D9').name
         assertEquals 0, vendor.deposit
 
-        assertEquals 1, vendor.pay(1)
+        assertEquals 1, vendor.dollar()
         assertEquals 'Baby Ruth', vendor.vend('D8').name
         assertEquals 0, vendor.deposit
+
+        assertEquals 102, vendor.bank[Coin.dollar]
+        assertEquals 100, vendor.bank[Coin.quarter]
+        assertEquals 100, vendor.bank[Coin.dime]
+        assertEquals 100, vendor.bank[Coin.nickel]
     }
 
     void testNotEnoughMoneyWontVend() {
-        assertEquals 0.5, vendor.pay(0.5)
+        assertEquals 0.25, vendor.quarter()
+        assertEquals 0.5, vendor.quarter()
         assertEquals null, vendor.vend('D8')
         assertEquals 0.5, vendor.deposit
+
+        assertEquals 100, vendor.bank[Coin.dollar]
+        assertEquals 102, vendor.bank[Coin.quarter]
+        assertEquals 100, vendor.bank[Coin.dime]
+        assertEquals 100, vendor.bank[Coin.nickel]
     }
 
     void testTooMuchMoneyReturnsChangeAfterVend() {
-        assertEquals 0.25, vendor.pay(0.25)
-        assertEquals 1.25, vendor.pay(1)
+        assertEquals 0.25, vendor.quarter()
+        assertEquals 1.25, vendor.dollar()
         vendor.vend('D8')
         assertEquals 0.25, vendor.deposit
         def change = vendor.change()
         assertEquals 1, change.size()
         assertEquals Coin.quarter, change[0]
         assertEquals 0, vendor.deposit
+
+        assertEquals 101, vendor.bank[Coin.dollar]
+        assertEquals 100, vendor.bank[Coin.quarter]
+        assertEquals 100, vendor.bank[Coin.dime]
+        assertEquals 100, vendor.bank[Coin.nickel]
     }
 
     void testCallingChangeBeforeVendReturnsCorrectAmount_AndClearsDeposit() {
-        assertEquals 1, vendor.pay(1)
+        assertEquals 1, vendor.dollar()
         assertChangeEquals 1, vendor.change()
         assertEquals null, vendor.vend('D9')
         assertEquals 0, vendor.deposit
+
+        assertEquals 100, vendor.bank[Coin.dollar]
+        assertEquals 100, vendor.bank[Coin.quarter]
+        assertEquals 100, vendor.bank[Coin.dime]
+        assertEquals 100, vendor.bank[Coin.nickel]
     }
 
     void testVendingWhenNoCodeExists() {
@@ -63,30 +84,39 @@ class VendingMachineTests extends GroovyTestCase {
 
     void testVendingWhenNoInventoryReturnsErrorMessage() {
         vendor.inventory.A1 = [item:[name:'Zagnut'], price:1, quantity:0]
-        vendor.pay(1)
+        vendor.dollar()
         assertEquals 'Sorry, no more Zagnut, please choose again.', vendor.vend('A1')
         assertEquals 1, vendor.deposit
+
+        assertEquals 101, vendor.bank[Coin.dollar]
+        assertEquals 100, vendor.bank[Coin.quarter]
+        assertEquals 100, vendor.bank[Coin.dime]
+        assertEquals 100, vendor.bank[Coin.nickel]
     }
 
     void testVendingDecreasesQuantity() {
         def count = vendor.inventory.D9.quantity
-        vendor.pay(1)
+        vendor.dollar()
         vendor.vend('D9')
         assertEquals count - 1, vendor.inventory.D9.quantity
+
+        assertEquals 101, vendor.bank[Coin.dollar]
+        assertEquals 100, vendor.bank[Coin.quarter]
+        assertEquals 100, vendor.bank[Coin.dime]
+        assertEquals 100, vendor.bank[Coin.nickel]
     }
 
     void testVendingDoesNotDecreaseQuantityWhenNoVendOccurs() {
         vendor.inventory.A1 = [item:[name:'Zagnut'], price:1, quantity:10]
-        vendor.pay(0.5)
+        vendor.quarter()
+        vendor.quarter()
         vendor.vend('A1')   // no vend should occur here because not enough $$
         assertEquals 10, vendor.inventory.A1.quantity
-    }
 
-    void testVendingTransaction() {
-        def t = new Transaction(deposit:1.50, code:'D9')
-        def result = t.doTransaction(vendor)
-        assertEquals 'Mr. Goodbar', result[0].name
-        assertChangeEquals 0.5, result[1]
+        assertEquals 100, vendor.bank[Coin.dollar]
+        assertEquals 102, vendor.bank[Coin.quarter]
+        assertEquals 100, vendor.bank[Coin.dime]
+        assertEquals 100, vendor.bank[Coin.nickel]
     }
 
     void testBuyWithQuarters() {

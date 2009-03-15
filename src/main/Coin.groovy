@@ -6,7 +6,6 @@ enum Coin {
     nickel(0.05)
 
     Coin(value) {
-        println "initializing Coin with $value"
         this.value = value
     }
 
