@@ -22,4 +22,21 @@ B4,Honey Bun,1.50,7
         assertEquals 'Zagnut', vendor.inventory.A2.item.name
         assertEquals 120, vendor.inventory.A3.quantity
     }
+
+    void testLoadBank() {
+        def bank = """
+dollars:100
+quarters:101
+dimes:102
+nickels:103
+        """
+        def vendor = new VendingMachine()
+        def loader = new InventoryLoader(vendor)
+        loader.loadBank(bank)
+        assertNotNull vendor.bank
+        assertEquals 100, vendor.bank[Coin.dollar]
+        assertEquals 101, vendor.bank[Coin.quarter]
+        assertEquals 102, vendor.bank[Coin.dime]
+        assertEquals 103, vendor.bank[Coin.nickel]
+    }
 }

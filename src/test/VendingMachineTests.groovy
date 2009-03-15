@@ -25,11 +25,11 @@ class VendingMachineTests extends GroovyTestCase {
 
     void testVend() {
         assertEquals 1, vendor.dollar()
-        assertEquals 'Mr. Goodbar', vendor.vend('D9').name
+        assertVendEquals 'Mr. Goodbar', 0, vendor.vend('D9')
         assertEquals 0, vendor.deposit
 
         assertEquals 1, vendor.dollar()
-        assertEquals 'Baby Ruth', vendor.vend('D8').name
+        assertVendEquals 'Baby Ruth', 0, vendor.vend('D8')
         assertEquals 0, vendor.deposit
 
         assertEquals 102, vendor.bank[Coin.dollar]
@@ -53,12 +53,7 @@ class VendingMachineTests extends GroovyTestCase {
     void testTooMuchMoneyReturnsChangeAfterVend() {
         assertEquals 0.25, vendor.quarter()
         assertEquals 1.25, vendor.dollar()
-        vendor.vend('D8')
-        assertEquals 0.25, vendor.deposit
-        def change = vendor.change()
-        assertEquals 1, change.size()
-        assertEquals Coin.quarter, change[0]
-        assertEquals 0, vendor.deposit
+        assertVendEquals 'Baby Ruth', 0.25, vendor.vend('D8')
 
         assertEquals 101, vendor.bank[Coin.dollar]
         assertEquals 100, vendor.bank[Coin.quarter]
@@ -68,7 +63,7 @@ class VendingMachineTests extends GroovyTestCase {
 
     void testCallingChangeBeforeVendReturnsCorrectAmount_AndClearsDeposit() {
         assertEquals 1, vendor.dollar()
-        assertChangeEquals 1, vendor.change()
+        assertChangeEquals 1, vendor.coinReturn()
         assertEquals null, vendor.vend('D9')
         assertEquals 0, vendor.deposit
 
@@ -119,19 +114,27 @@ class VendingMachineTests extends GroovyTestCase {
         assertEquals 100, vendor.bank[Coin.nickel]
     }
 
-    void testBuyWithQuarters() {
+    // spec Example 1:
+    void testBuyWithExactChange() {
         vendor.quarter()
         vendor.quarter()
         vendor.quarter()
         vendor.quarter()
-        assertEquals 'item a', vendor.getA().name
+        assertVendEquals 'item b', 0, vendor.getB()
     }
 
-    void testQuarterAndChange() {
+    // spec Example 2:
+    void testQuarterAndCoinReturn() {
         vendor.quarter()
         vendor.quarter()
-        assertChangeEquals 0.5, vendor.change()
+        assertChangeEquals 0.5, vendor.coinReturn()
         assertEquals 0, vendor.deposit
+    }
+
+    // spec Example 3:
+    void testBuyA_WithoutExactChange() {
+        vendor.dollar()
+        assertVendEquals 'item a', 0.35, vendor.getA()
     }
 
     void testToCoin_25() {
@@ -209,8 +212,18 @@ class VendingMachineTests extends GroovyTestCase {
         assertEquals 99, vendor.bank[Coin.nickel]
     }
 
+    private assertVendEquals(expectedItemName, expectedChange, vend) {
+        def (item, change) = vend
+        assertEquals expectedItemName, item.name
+        assertChangeEquals expectedChange, change
+    }
+
     private assertChangeEquals(double amount, change) {
-        assertEquals amount, change.collect { it.value() }.sum() 
+        if (amount == 0) {
+            assertEquals 0, change.size()
+        } else {
+            assertEquals amount, change.collect { it.value() }.sum()
+        }
     }
 
 }

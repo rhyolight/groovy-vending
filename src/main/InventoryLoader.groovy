@@ -20,4 +20,12 @@ class InventoryLoader {
             ]
         }
     }
+
+    void loadBank(bank) {
+        vendor.bank = [:]
+        bank.trim().eachLine { line ->
+            def item = line.split(':')
+            vendor.bank[Coin."${(item[0] - 's')}"] = item[1].toInteger()
+        }
+    }
 }

@@ -13,20 +13,17 @@ class VendingMachine {
     }
 
     def vend = { code ->
-        println "vend($code)"
-        println "deposit on ${this}: $deposit"
         def item = inventory[code]
-        println item
         if (!item) return "Sorry, no code of '${code}' exists."
         if (item.quantity <= 0) return "Sorry, no more ${item.item.name}, please choose again."
         if (item.price <= deposit) {
             deposit = deposit - item.price
             item.quantity--
-            return item.item
+            return [item.item, coinReturn()]
         }
     }
 
-    def change() {
+    def coinReturn() {
         def change = deposit
         deposit = 0
         toCoin(change)
@@ -46,7 +43,6 @@ class VendingMachine {
     }
 
     def methodMissing(String name, args) {
-        println "methodMissing: $name"
         if (name.startsWith('get')) {
             this.vend(name - 'get')
         } else {
