@@ -15,8 +15,10 @@ B3,Doritos,1.25,10
 B4,Honey Bun,1.50,7
         """
         def vendor = new VendingMachine()
+        vendor.serviceMode = true
         def loader = new InventoryLoader(vendor)
         loader.load(inventory)
+        vendor.serviceMode = false
         assertNotNull vendor.inventory
         assertEquals 1, vendor.inventory.A1.price
         assertEquals 'Zagnut', vendor.inventory.A2.name
@@ -31,8 +33,10 @@ dimes:102
 nickels:103
         """
         def vendor = new VendingMachine()
+        vendor.serviceMode = true
         def loader = new InventoryLoader(vendor)
         loader.loadBank(bank)
+        vendor.serviceMode = false
         assertNotNull vendor.bank
         assertEquals 100, vendor.bank[Coin.dollar]
         assertEquals 101, vendor.bank[Coin.quarter]

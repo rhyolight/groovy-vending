@@ -6,6 +6,20 @@ class VendingMachine {
     def inventory
     def bank
     def deposit = 0
+    def serviceMode = false
+
+    void setInventory(inventory) {
+        if (!serviceMode) {
+            throw new VendingException('Cannot execute command unless in service mode')
+        }
+        this.@inventory = inventory
+    }
+
+    void setBank(bank) {
+        if (!serviceMode)
+            throw new VendingException('Cannot execute command unless in service mode')
+        this.@bank = bank
+    }
     
     def pay(amount) {
         deposit += amount
@@ -42,10 +56,12 @@ class VendingMachine {
         coins
     }
 
+    def propertyMissing(String name) {
+        this.vend(name)
+    }
+
     def methodMissing(String name, args) {
-        if (name.startsWith('get')) {
-            this.vend(name - 'get')
-        } else {
+        if (name in Coin.values().collect {it.name()}) {
             def newMethod = { ->
                 delegate.bank[Coin."$name"]++
                 delegate.pay(Coin."$name".value())

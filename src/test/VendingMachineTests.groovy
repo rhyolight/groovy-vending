@@ -14,6 +14,11 @@ class VendingMachineTests extends GroovyTestCase {
                 D8:[name:'Baby Ruth', price: 1.0, quantity: 1000],
                 D9:[name:'Mr. Goodbar', price: 1.0, quantity: 1000]
         ]
+        def msg = shouldFail(VendingException) {
+            vendor.inventory = inventory
+        }
+        assertEquals "Cannot execute command unless in service mode", msg
+        vendor.serviceMode = true
         vendor.inventory = inventory
         vendor.bank = [
                 (Coin.dollar):100,
@@ -21,6 +26,7 @@ class VendingMachineTests extends GroovyTestCase {
                 (Coin.dime):100,
                 (Coin.nickel):100
         ]
+        vendor.serviceMode = false
     }
 
     void testVend() {
@@ -120,7 +126,7 @@ class VendingMachineTests extends GroovyTestCase {
         vendor.quarter()
         vendor.quarter()
         vendor.quarter()
-        assertVendEquals 'item b', 0, vendor.getB()
+        assertVendEquals 'item b', 0, vendor.B
     }
 
     // spec Example 2:
@@ -134,7 +140,7 @@ class VendingMachineTests extends GroovyTestCase {
     // spec Example 3:
     void testBuyA_WithoutExactChange() {
         vendor.dollar()
-        assertVendEquals 'item a', 0.35, vendor.getA()
+        assertVendEquals 'item a', 0.35, vendor.A
     }
 
     void testToCoin_25() {
