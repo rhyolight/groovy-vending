@@ -1,0 +1,17 @@
+usePlugin 'groovy'
+
+version='0.2-SNAPSHOT'
+
+sourceCompatibility=1.5
+targetCompatibility=1.5
+
+dependencies {
+   addMavenRepo()
+   groovy "org.codehaus.groovy:groovy-all:1.6-RC-2"
+   testCompile "junit:junit:3.8.2"
+}
+
+// these settings are necessary because the
+// src and test dirs are non standard
+groovySrcDirNames << 'main'
+groovyTestSrcDirNames << 'test'
