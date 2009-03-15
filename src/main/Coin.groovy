@@ -1,0 +1,16 @@
+enum Coin {
+
+    dollar(1),
+    quarter(0.25),
+    dime(0.1),
+    nickel(0.05)
+
+    Coin(value) {
+        println "initializing Coin with $value"
+        this.value = value
+    }
+
+    private final def value
+
+    def value() { return value }
+}

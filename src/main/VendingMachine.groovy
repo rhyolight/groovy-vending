@@ -3,14 +3,8 @@
  */
 class VendingMachine {
 
-    static final COINS = [
-            'dollar': 1,
-            'quarter': 0.25,
-            'dime': 0.1,
-            'nickel': 0.05
-    ]
-
     def inventory
+    def bank
     def deposit = 0
     
     def pay(amount) {
@@ -32,7 +26,20 @@ class VendingMachine {
     def change() {
         def change = deposit
         deposit = 0
-        change
+        toCoin(change)
+    }
+
+    private def toCoin(change) {
+        def coins = []
+        Coin.values().each { coin ->
+            // while change to give is greater than coin value, and there are more coins in the bank to give
+            while (change >= coin.value() && bank[coin]) {
+                coins << coin
+                bank[coin]--
+                change -= coin.value()
+            }
+        }
+        coins
     }
 
     def methodMissing(String name, args) {
@@ -42,9 +49,10 @@ class VendingMachine {
         } else {
             VendingMachine.metaClass."$name" = { ->
                 println "in $name"
-                delegate.pay(COINS[name])
+                delegate.pay(Coin."$name".value())
             }
-            return this.pay(COINS[name])
+            println Coin.quarter
+            return this.pay(Coin."$name".value())
         }
     }
 }
