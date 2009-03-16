@@ -8,3 +8,7 @@ To run tests from root, you must have Groovy 1.6.
 
 groovy -cp src/main src/test/VendingMachineTests.groovy
 groovy -cp src/main src/test/InventoryLoadingTests.groovy
+
+If you have gradle installed, run:
+
+gradle test
