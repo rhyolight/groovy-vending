@@ -8,13 +8,6 @@ class VendingMachine {
     def deposit = 0
     def serviceMode = false
 
-    void setProperty(String propertyName, value) {
-		if(propertyName in ['bank', 'inventory'] && !serviceMode) {
-			throw new VendingException('Cannot execute command unless in service mode')
-		}
-		metaClass.setProperty(this, propertyName, value)
-    }
-
     def pay(amount) {
         deposit += amount
         deposit
@@ -48,6 +41,13 @@ class VendingMachine {
             }
         }
         coins
+    }
+
+    void setProperty(String propertyName, value) {
+        if (propertyName in ['bank', 'inventory'] && !serviceMode) {
+            throw new VendingException('Cannot execute command unless in service mode')
+        }
+        metaClass.setProperty(this, propertyName, value)
     }
 
     def propertyMissing(String name) {
